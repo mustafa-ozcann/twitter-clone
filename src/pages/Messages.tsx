@@ -1,4 +1,4 @@
-import React from 'react'
+  import React from 'react'
 
 function Messages() {
   return (
@@ -9,7 +9,7 @@ function Messages() {
       </div>
       
       {/* Content */}
-      <div className="flex h-[calc(100vh-73px)]">
+      <div className="flex flex-row h-screen w-full bg-black ">
         {/* Messages List */}
         <div className="w-1/3 border-r border-gray-800">
           <div className="p-4">
@@ -37,7 +37,7 @@ function Messages() {
             </div>
 
             {/* Message List */}
-            <div className="space-y-1">
+            <div className="h-full overflow-y-auto">
               {[
                 { name: "React Team", username: "@reactjs", message: "New features coming soon!", time: "2s", unread: true },
                 { name: "TypeScript", username: "@typescript", message: "Type safety is important", time: "1m", unread: false },
