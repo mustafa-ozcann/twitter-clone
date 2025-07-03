@@ -1,18 +1,21 @@
-import React from 'react'
 import Sidebar from '../components/Sidebar'
+import RightSidebar from '../components/RightSidebar'
 import { Outlet } from 'react-router-dom'
 
 function MainLayout() {
   return (
-    <div className='min-h-screen bg-black flex'>
-      {/* Sidebar - Sol taraf */}
-      <div className='w-1/4 h-screen bg-black'>
+    <div className="bg-black min-h-screen w-full flex justify-center">
+      {/* Sol Sidebar */}
+      <div className="hidden xl:flex flex-col w-[275px]">
         <Sidebar />
       </div>
-      
-      {/* Main Content - Sağ taraf */}
-        <div className='w-3/4 h-screen bg-black'>
+      {/* Orta İçerik */}
+      <main className="flex-1 max-w-[600px] border-x border-gray-800 min-h-screen">
         <Outlet />
+      </main>
+      {/* Sağ Sidebar */}
+      <div className="hidden xl:block w-[350px]">
+        <RightSidebar />
       </div>
     </div>
   )

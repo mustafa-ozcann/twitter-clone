@@ -6,15 +6,18 @@ function Home() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <div className="sticky top-0 bg-black/80 backdrop-blur-md border-b border-gray-800 p-4">
-        <h1 className="text-xl font-bold">Anasayfa</h1>
+      <div className="sticky top-0 bg-black/80 backdrop-blur-md border-b border-gray-800 p-4 z-10">
+        <div className="max-w-2xl mx-auto px-4">
+          <h1 className="text-xl font-bold">Anasayfa</h1>
+        </div>
       </div>
-      
-      {/* Post Form */}
-      <PostForm />
-      
-      {/* Posts Timeline */}
-      <PostList />
+      {/* Responsive Container */}
+      <div className="max-w-2xl mx-auto px-4">
+        {/* Post Form */}
+        <PostForm />
+        {/* Posts Timeline */}
+        <PostList />
+      </div>
     </div>
   )
 }
