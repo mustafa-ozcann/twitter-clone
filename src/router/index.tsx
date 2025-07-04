@@ -1,4 +1,3 @@
-
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { lazy } from "react";
 import ProtectedRoute from "../components/ProtetedRoute";
@@ -13,6 +12,8 @@ const Bookmarks = lazy(() => import('../pages/Bookmarks'));
 const Grok = lazy(() => import('../pages/Grok'));
 const Premium = lazy(() => import('../pages/Premium'));
 const Profile = lazy(() => import('../pages/Profile'));
+const PostDetails = lazy(() => import('../pages/PostDetails'));
+
 
 const router = createBrowserRouter([
     {
@@ -51,6 +52,11 @@ const router = createBrowserRouter([
                 path: '/profile/:id',
                 element: <ProtectedRoute><Profile /></ProtectedRoute>,
             },
+            {
+                path: '/post/:id',
+                element: <ProtectedRoute><PostDetails /></ProtectedRoute>,
+            },
+            
             
             
         ]

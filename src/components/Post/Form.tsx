@@ -25,7 +25,6 @@ function PostForm({ onPostCreated }: PostFormProps) {
         userName: user.displayName || 'Kullanıcı',
         userAvatar: user.photoURL || '',
         likes: [],
-        comments: [],
         retweets: [],
         replies: []
       })

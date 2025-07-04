@@ -1,5 +1,6 @@
 import React from 'react'
 import { Timestamp } from 'firebase/firestore'
+import { useNavigate } from 'react-router-dom'
 
 interface PostItemProps {
   post: {
@@ -10,14 +11,16 @@ interface PostItemProps {
     userName: string
     userAvatar: string
     likes: string[]
-    comments: string[]
     retweets: string[]
     replies: string[]
+    commentCount?: number
   }
   currentUserId?: string
 }
 
 function PostItem({ post, currentUserId }: PostItemProps) {
+  const navigate = useNavigate();
+
   // Format timestamp
   const formatTime = (timestamp: Timestamp | Date | null | undefined) => {
     if (!timestamp) return ''
@@ -51,9 +54,9 @@ function PostItem({ post, currentUserId }: PostItemProps) {
     console.log('Retweet post:', post.id)
   }
 
-  const handleComment = () => {
-    // TODO: Implement comment functionality
-    console.log('Comment on post:', post.id)
+  const handleComment = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/post/${post.id}`);
   }
 
   const handleShare = () => {
@@ -123,7 +126,7 @@ function PostItem({ post, currentUserId }: PostItemProps) {
                   <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01z"/>
                 </svg>
               </div>
-              <span className="text-sm">{post.comments.length > 0 ? post.comments.length : ''}</span>
+              <span className="text-sm">{post.commentCount && post.commentCount > 0 ? post.commentCount : ''}</span>
             </button>
 
             {/* Retweet */}

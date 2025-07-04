@@ -1,9 +1,11 @@
-import React from 'react'
+
 import { useAuthStore } from '../zustand/authStore'
+import { useParams } from 'react-router-dom'
+import Posts from '../components/Profile/Posts'
 
 function Profile() {
   const { user } = useAuthStore()
-  
+  const { id } = useParams()
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -86,7 +88,8 @@ function Profile() {
           {/* Tabs */}
           <div className="border-b border-gray-800">
             <div className="flex">
-              <button className="flex-1 py-4 text-center font-semibold border-b-2 border-blue-500 text-white">
+              <button className="flex-1 py-4 text-center font-semibold border-b-2 border-blue-500 text-white"
+               >
                 Gönderiler
               </button>
               <button className="flex-1 py-4 text-center font-semibold text-gray-500 hover:text-white">
@@ -103,12 +106,7 @@ function Profile() {
 
           {/* Posts */}
           <div className="mt-6">
-            <div className="text-center py-8">
-              <h3 className="text-2xl font-bold mb-2">Henüz hiç gönderi yok</h3>
-              <p className="text-gray-500">
-                İlk gönderini paylaştığında burada görünecek.
-              </p>
-            </div>
+            <Posts id={id}  />
           </div>
         </div>
       </div>

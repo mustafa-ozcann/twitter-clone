@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { listenToPosts } from "../firebase/PostService";
+import { listenToPosts, addCommentToPost } from "../firebase/PostService";
 import { Timestamp } from "firebase/firestore";
 
 export interface Post {
@@ -10,9 +10,17 @@ export interface Post {
     userName: string;
     userAvatar: string;
     likes: string[];
-    comments: string[];
     retweets: string[];
     replies: string[];
+    commentCount?: number;
+}
+
+export interface Comment {
+    id: string;
+    userId: string;
+    userName: string;
+    content: string;
+    createdAt: Timestamp | Date;
 }
 
 interface PostState {
@@ -21,6 +29,7 @@ interface PostState {
     error: string | null;
     addPost: (post: Post) => void;
     getPosts: () => void;
+    addComment: (postId: string, comment: Comment) => void;
 }
 
 export const usePostStore = create<PostState>((set) => ({
@@ -41,7 +50,18 @@ export const usePostStore = create<PostState>((set) => ({
                 loading: false 
             });
         }
-    },
+    },   
+
+    addComment: async (postId: string, comment: Comment) => {
+        await addCommentToPost(postId, comment);
+        set((state) => ({
+            posts: state.posts.map((post) => 
+                post.id === postId 
+                    ? {...post, commentCount: (post.commentCount || 0) + 1} 
+                    : post
+            )
+        }))
+    }
 }));
 
 export default usePostStore;

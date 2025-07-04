@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, type DocumentData, Timestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, type DocumentData, Timestamp, doc, collection as subcollection, addDoc as addSubDoc, getCountFromServer } from "firebase/firestore";
 import { db } from "./config";
 
 export interface PostData {
@@ -8,14 +8,8 @@ export interface PostData {
     userName: string;
     userAvatar: string;
     likes: string[];
-    comments: string[];
     retweets: string[];
     replies: string[];
-    images?: string[];
-    video?: string;
-    audio?: string;
-    link?: string;
-    location?: string;
 }
 
 export const createPost = async (postData: PostData): Promise<void> => {
@@ -27,14 +21,8 @@ export const createPost = async (postData: PostData): Promise<void> => {
             userName: postData.userName,
             userAvatar: postData.userAvatar,
             likes: [],
-            comments: [],
             retweets: [],
-            replies: [],
-            images: postData.images || [],
-            video: postData.video || "",
-            audio: postData.audio || "",
-            link: postData.link || "",
-            location: postData.location || "",
+            replies: []
         });
     } catch (error) {
         console.error("Error creating post:", error);
@@ -46,12 +34,25 @@ export const listenToPosts = (callback: (posts: DocumentData[]) => void): (() =>
     const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
     
     return onSnapshot(q, 
-        (snapshot) => {
-            const posts = snapshot.docs.map((doc) => ({ 
-                id: doc.id, 
-                ...doc.data() 
-            }));
-            callback(posts);
+        async (snapshot) => {
+            const postsWithCommentCount = await Promise.all(
+                snapshot.docs.map(async (doc) => {
+                    const postData: DocumentData & { commentCount?: number } = { id: doc.id, ...doc.data() };
+                    
+                    // Comment sayısını al
+                    try {
+                        const commentsRef = collection(db, "posts", doc.id, "comments");
+                        const commentCountSnapshot = await getCountFromServer(commentsRef);
+                        postData.commentCount = commentCountSnapshot.data().count;
+                    } catch (error) {
+                        console.error("Error getting comment count:", error);
+                        postData.commentCount = 0;
+                    }
+                    
+                    return postData;
+                })
+            );
+            callback(postsWithCommentCount);
         },
         (error) => {
             console.error("Error listening to posts:", error);
@@ -59,3 +60,23 @@ export const listenToPosts = (callback: (posts: DocumentData[]) => void): (() =>
         }
     );
 };
+
+export const addCommentToPost = async (postId: string, comment: {
+    userId: string;
+    userName: string;
+    content: string;
+    createdAt: Date | Timestamp;
+}) => {
+    try {
+        const postRef = doc(db, "posts", postId);
+        await addSubDoc(subcollection(postRef, "comments"), {
+            userId: comment.userId,
+            userName: comment.userName,
+            content: comment.content,
+            createdAt: serverTimestamp(),
+        });
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        throw new Error(error instanceof Error ? error.message : 'Yorum eklenirken hata oluştu');
+    }
+}
