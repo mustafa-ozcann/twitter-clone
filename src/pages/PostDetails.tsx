@@ -50,7 +50,7 @@ function PostDetails() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 text-white">
-      <PostItem post={post} currentUserId={user?.uid} />
+      <PostItem post={post} />
       <div className="mt-8">
         <h2 className="text-lg font-bold mb-4">Yorumlar</h2>
         <form onSubmit={handleAddComment} className="mb-6 flex gap-2">

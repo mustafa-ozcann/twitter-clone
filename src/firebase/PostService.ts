@@ -1,4 +1,5 @@
-import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, type DocumentData, Timestamp, doc, collection as subcollection, addDoc as addSubDoc, getCountFromServer } from "firebase/firestore";
+
+import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, type DocumentData, Timestamp, doc, collection as subcollection, addDoc as addSubDoc, getCountFromServer, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "./config";
 
 export interface PostData {
@@ -78,5 +79,25 @@ export const addCommentToPost = async (postId: string, comment: {
     } catch (error) {
         console.error("Error adding comment:", error);
         throw new Error(error instanceof Error ? error.message : 'Yorum eklenirken hata oluştu');
+    }
+}
+
+export const toggleLikePost = async (postId: string, userId: string, isLiked: boolean): Promise<void> => {
+    try {
+        const postRef = doc(db, "posts", postId);
+        if (isLiked) {
+            // Unlike - remove user from likes array
+            await updateDoc(postRef, {
+                likes: arrayRemove(userId)
+            });
+        } else {
+            // Like - add user to likes array
+            await updateDoc(postRef, {
+                likes: arrayUnion(userId)
+            });
+        }
+    } catch (error) {
+        console.error("Error toggling like:", error);
+        throw new Error(error instanceof Error ? error.message : 'Beğeni işlemi sırasında hata oluştu');
     }
 }

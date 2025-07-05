@@ -1,6 +1,8 @@
 import React from 'react'
 import { Timestamp } from 'firebase/firestore'
 import { useNavigate } from 'react-router-dom'
+import { usePostStore } from '../../zustand/postStore'
+import { useAuthStore } from '../../zustand/authStore'
 
 interface PostItemProps {
   post: {
@@ -15,11 +17,12 @@ interface PostItemProps {
     replies: string[]
     commentCount?: number
   }
-  currentUserId?: string
 }
 
-function PostItem({ post, currentUserId }: PostItemProps) {
+function PostItem({ post }: PostItemProps) {
   const navigate = useNavigate();
+  const { toggleLike } = usePostStore();
+  const { user } = useAuthStore();
 
   // Format timestamp
   const formatTime = (timestamp: Timestamp | Date | null | undefined) => {
@@ -41,12 +44,16 @@ function PostItem({ post, currentUserId }: PostItemProps) {
     })
   }
 
-  const isLiked = currentUserId ? post.likes.includes(currentUserId) : false
-  const isRetweeted = currentUserId ? post.retweets.includes(currentUserId) : false
+  const isLiked = user ? post.likes.includes(user.uid) : false
+  const isRetweeted = user ? post.retweets.includes(user.uid) : false
 
-  const handleLike = () => {
-    // TODO: Implement like functionality
-    console.log('Like post:', post.id)
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      // Kullanıcı giriş yapmamışsa login modal'ı aç
+      return;
+    }
+    toggleLike(post.id, user.uid);
   }
 
   const handleRetweet = () => {

@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react'
 import PostItem from './Item'
 import usePostStore from '../../zustand/postStore'
-import { useAuthStore } from '../../zustand/authStore'
 import { useNavigate } from 'react-router-dom'
 
 function PostList() {
   const { posts, loading, getPosts } = usePostStore()
-  const { user } = useAuthStore()
   const navigate = useNavigate()
   console.log(posts)
 
@@ -80,7 +78,6 @@ function PostList() {
         <div key={post.id} onClick={() => navigate(`/post/${post.id}`)} style={{cursor:'pointer'}}>
           <PostItem 
             post={post}
-            currentUserId={user?.uid}
           />
         </div>
       ))}
